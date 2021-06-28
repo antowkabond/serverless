@@ -1,0 +1,56 @@
+service: test-service
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+
+functions:
+  consume:
+    handler: handler.consume
+    name: consume-function
+    events:
+      - sqs:
+          arn: { Fn::GetAtt: [ sqsQueue, Arn ] }
+          batchSize: 1
+    environment:
+      REGION: ${self:provider.region}
+
+resources:
+  Resources:
+    sqsQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        QueueName: 'test-queue'
+
+
+
+
+#  hello:
+#    handler: handler.hello
+#    name: hello-function
+#    events:
+#      - httpApi:
+#          path: /put
+#          method: POST
+#    environment:
+#      REGION: ${self:provider.region}
+
+#    s3Bucket:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: 'some-bucket-name123'
+
+#  iam:
+#    role:
+#      name: '${self:service}-${self:provider.region}-lambda-role'
+#      statements:
+#        - Effect: Allow
+#          Action:
+#            - s3:PutObject
+#            - s3:PutObjectAcl
+#            - s3:GetObjectAcl
+#            - s3:GetObject
+#          Resource:
+#            Fn::Join: [ '', [ { Fn::GetAtt: [ s3Bucket, Arn ] }, '/*' ] ]
+#            # "Resource": "arn:aws:s3:::some-bucket-name123/*"
