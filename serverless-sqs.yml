@@ -1,4 +1,4 @@
-service: test-service
+service: sqs-service
 
 provider:
   name: aws
@@ -7,8 +7,8 @@ provider:
 
 functions:
   consume:
-    handler: handler.consume
-    name: consume-function
+    handler: handlers/sqs-handler.consume
+    name: '${self:service}-consume-function'
     events:
       - sqs:
           arn: { Fn::GetAtt: [ sqsQueue, Arn ] }
@@ -21,7 +21,7 @@ resources:
     sqsQueue:
       Type: 'AWS::SQS::Queue'
       Properties:
-        QueueName: 'test-queue'
+        QueueName: '${self:service}-demo-queue'
 
 
 

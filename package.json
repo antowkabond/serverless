@@ -1,6 +1,10 @@
 {
-  "name": "pet-project",
+  "name": "serverless-project",
   "version": "1.0.0",
+  "scripts": {
+    "deploy:s3": "sls deploy --config serverless-s3.yml",
+    "deploy:sqs": "sls deploy --config serverless-sqs.yml"
+  },
   "dependencies": {
     "aws-sdk": "^2.909.0"
   }

@@ -1,0 +1,37 @@
+service: s3-service
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+
+  iam:
+    role:
+      name: '${self:service}-lambda-role'
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+          Resource:
+            Fn::Join: [ '', [ { Fn::GetAtt: [ s3Bucket, Arn ] }, '/*' ] ]
+#             "Resource": "arn:aws:s3:::s3-service-demo-bucket/*"
+
+functions:
+  getPhoto:
+    handler: handlers/s3-handler.getPhoto
+    name: '${self:service}-getPhoto-function'
+    events:
+      - httpApi:
+          path: /get/{fileName}
+          method: get
+    environment:
+      REGION: ${self:provider.region}
+      BUCKET_NAME: !Ref s3Bucket
+
+resources:
+  Resources:
+    s3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: '${self:service}-demo-bucket'
