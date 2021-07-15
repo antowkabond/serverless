@@ -13,7 +13,8 @@ provider:
           Action:
             - s3:PutObject
             - s3:GetObject
-          Resource:
+          Resource: '*'
+
             Fn::Join: [ '', [ { Fn::GetAtt: [ s3Bucket, Arn ] }, '/*' ] ]
 #             "Resource": "arn:aws:s3:::s3-service-demo-bucket/*"
 
